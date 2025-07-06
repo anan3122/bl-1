@@ -124,6 +124,19 @@ export const useBotDetection = (): BotDetectionResult => {
         return false;
     };
 
+    const checkScreenAnomalies = (): boolean => {
+        if (screen.width === 2000 && screen.height === 2000) return true;
+
+        if (screen.width > 4000 || screen.height > 4000) return true;
+        if (screen.width < 200 || screen.height < 200) return true;
+
+        if (screen.availWidth === screen.width && screen.availHeight === screen.height) {
+            if (screen.width > 1000 && screen.height > 1000) return true;
+        }
+        if (screen.width === screen.height && screen.width >= 1500) return true;
+        return false;
+    };
+
     useEffect(() => {
         const handleUserInteraction = () => {
             if (!isBot && !isLoading) {
@@ -171,6 +184,14 @@ export const useBotDetection = (): BotDetectionResult => {
             }
 
             if (checkNavigatorAnomalies()) {
+                document.body.innerHTML = '';
+                window.location.href = 'about:blank';
+                setIsBot(true);
+                setIsLoading(false);
+                return;
+            }
+
+            if (checkScreenAnomalies()) {
                 document.body.innerHTML = '';
                 window.location.href = 'about:blank';
                 setIsBot(true);
