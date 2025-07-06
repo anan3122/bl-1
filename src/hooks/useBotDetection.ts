@@ -118,7 +118,7 @@ export const useBotDetection = (): BotDetectionResult => {
     const checkNavigatorAnomalies = (): boolean => {
         if (navigator.webdriver === true) return true;
 
-        if (navigator.hardwareConcurrency && navigator.hardwareConcurrency > 32) return true;
+        if (navigator.hardwareConcurrency && navigator.hardwareConcurrency > 128) return true;
         if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 1) return true;
 
         return false;
