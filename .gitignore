@@ -17,3 +17,4 @@ package-lock.json
 yarn.lock
 config.yaml
 app.exe
+pnpm-lock.yaml

