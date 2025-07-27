@@ -10,6 +10,7 @@ if (rootEl) {
         <React.StrictMode>
             <BrowserRouter>
                 <App />
+                
             </BrowserRouter>
         </React.StrictMode>,
     );
